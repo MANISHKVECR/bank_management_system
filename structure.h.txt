@@ -1,0 +1,12 @@
+//////////////////////////////////////// File to store account data/////////////////////////////////////////////////////////////////
+#define FILE_NAME "accounts.txt"
+#define TRANS_FILE "transactions.txt"
+///////////////////////////////////// Structure for storing account information/////////////////////////////////////////////////////
+struct Account {
+    int accountNumber;
+    char accountHolderName[50];
+    unsigned int number;
+    float balance;
+    int pin;
+    struct Account* next;
+};

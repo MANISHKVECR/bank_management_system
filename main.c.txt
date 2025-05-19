@@ -1,0 +1,121 @@
+#include"header.h"
+#include"structure.h"
+#include"bank.h"
+#include"transfer.h"
+#include"deleteacc.h"
+int main()
+
+{     
+	int acc2;
+        float rupee;
+    struct Account* head = loadAccountsFromFile();
+    int choice, accountNumber;
+    float amount;
+    char name[50];
+    unsigned int number;
+    int pin;
+    while (1) {
+        printf("\n--- Banking System ---\n");
+        printf("1. Create Account\n");
+        printf("2. Deposit\n");
+        printf("3. Withdraw\n");
+        printf("4. Display Account Details\n");
+        printf("5. Display All Accounts\n");
+        printf("6. Transfer Money\n");
+        printf("7. view Transaction\n");
+        printf("8. Delete Account\n");
+        printf("9. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter Account Number: ");
+                scanf("%d", &accountNumber);
+                printf("Enter pin: ");
+                scanf("%d",&pin);
+                printf("Enter Account Holder Name: ");
+                getchar();
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = '\0';
+                printf("Enter Mobile Number: ");
+                scanf("%d", &number);
+                printf("Enter Initial Deposit: ");
+                scanf("%f", &amount);
+                head = createAccount(head, accountNumber, name, number,pin, amount);
+                saveAccountToFile(head);
+                printf("Account created successfully!\n");
+                break;
+
+            case 2:
+                printf("Enter Account Number: ");
+                scanf("%d", &accountNumber);
+                printf("Enter Deposit Amount: ");
+                scanf("%f", &amount);
+                deposit(head, accountNumber, amount);
+                updateFile(head);
+                break;
+
+            case 3:
+                printf("Enter Account Number: ");
+                scanf("%d", &accountNumber);
+                printf("Enter pin: ");
+                scanf("%d",&pin);
+                if(head->pin != pin){
+                        printf("Incorrect pin, try again");
+                        break;
+                }
+                printf("Enter Withdrawal Amount: ");
+                scanf("%f", &amount);
+                withdraw(head, accountNumber, amount);
+                updateFile(head);
+                break;
+
+            case 4:
+                printf("Enter Account Number: ");
+                scanf("%d", &accountNumber);
+                displayAccountDetails(head, accountNumber);
+                break;
+
+            case 5:
+                displayAllAccounts(head);
+                break;
+
+            case 6:
+                printf("Account from :");
+                scanf("%d",&accountNumber);
+
+                 printf("Enter pin: ");
+                scanf("%d",&pin);
+                if(head->pin != pin)
+                {
+                        printf("Incorrect pin, try again");
+                        break;
+                }
+
+                printf("\nAccount to :");
+                scanf("%d",&acc2);
+                printf("\nAmount :");
+                scanf("%f",&rupee);
+                transferFunds(head,accountNumber,acc2,rupee);
+                break;
+            case 7:
+                printf("last transaction\n");
+                viewTransactionHistory();
+                break;
+
+            case 8:
+                printf("Enter account number to DELETE\n");
+                scanf("%d",&accountNumber);
+                deleteAccount(head,accountNumber);
+                break;
+            case 9:
+                printf("Exiting the Banking System. Goodbye!\n");
+                exit(0);
+
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+    return 0;
+}

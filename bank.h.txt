@@ -1,0 +1,137 @@
+#include"header.h"
+
+//////////////////////////////////////// File to store account data/////////////////////////////////////////////////////////////////
+#define FILE_NAME "accounts.txt"
+////////////////////////////////////// Save account details to file/////////////////////////////////////////////////////////////////
+void saveAccountToFile(struct Account* account) {
+    FILE* file = fopen(FILE_NAME, "a");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
+    fprintf(file, "%d,%s,%d,%.2f, %d\n", account->accountNumber, account->accountHolderName, account->number, account->balance,account->pin);
+    fclose(file);
+}
+
+////////////////////////////////// Load accounts from file///////////////////////////////////////////////////////////////////////////
+    struct Account* loadAccountsFromFile() {
+    FILE* file = fopen(FILE_NAME, "r");
+    if (file == NULL) return NULL;
+    struct Account* head = NULL;
+    int accNum;
+    char name[50];
+    int mobNum;
+    float balance;
+    int pin;
+    while (fscanf(file, "%d,%49[^,],%d,%f, %d\n", &accNum, name, &mobNum, &balance,&pin) == 5) {
+        struct Account* newAccount = (struct Account*)malloc(sizeof(struct Account));
+        newAccount->accountNumber = accNum;
+        strcpy(newAccount->accountHolderName, name);
+        newAccount->number = mobNum;
+        newAccount->balance = balance;
+        newAccount->pin = pin;
+        newAccount->next = head;
+        head = newAccount;
+    }
+    fclose(file);
+    return head;
+}
+
+
+/////////////////////////////////////// Function to display account details/////////////////////////////////////////////////////////
+ void displayAccountDetails(struct Account* head, int accountNumber)
+{
+        struct Account* temp = head;
+        while (temp != NULL)
+        {
+             if (temp->accountNumber == accountNumber)
+             {
+                     printf("\n******  WELCOME %s  *********\n",temp->accountHolderName);
+                     printf("\nAccount Number: %d\n", temp->accountNumber);
+                     printf("Account Holder Name: %s\n", temp->accountHolderName);
+                      printf("Mobile Number: %d\n",temp->number);
+                     printf("Balance: %.2f\n", temp->balance);
+                     return;
+             }
+
+             temp = temp->next;
+        }
+             printf("Account number %d not found!\n", accountNumber);
+}
+
+//////////////////////////////////////////deposit money function/////////////////////////////////////////////////////////////////
+void deposit(struct Account* head, int accountNumber, float amount)
+{
+    struct Account* temp = head;
+       while (temp != NULL)
+         {
+              if (temp->accountNumber == accountNumber)
+                 {
+                    temp->balance += amount;
+                    printf("Deposited %.2f to account %d\n", amount, accountNumber);
+                    return;
+                  }
+              temp = temp->next;
+          }
+    printf("Account number %d not found!\n", accountNumber);
+}
+
+////////////////////////////////////////// display all account//////////////////////////////////////////////////////////////////
+void displayAllAccounts(struct Account* head)
+{
+    struct Account* temp = head;
+    if (temp == NULL)
+    {
+        printf("No accounts available.\n");
+        return;
+    }
+    while (temp != NULL)
+    {
+         printf("\nAccount Number: %d\n", temp->accountNumber);
+         printf("Account Holder Name: %s\n", temp->accountHolderName);
+         printf("Mobile Number: %d\n",temp->number);
+         printf("Balance: %.2f\n", temp->balance);
+         temp = temp->next;
+    }
+}
+
+////////////////////////////////////////////function to withrawl money//////////////////////////////////////////////////////////
+void withdraw(struct Account* head, int accountNumber, float amount)
+{
+    struct Account* temp = head;
+
+    while (temp != NULL)
+    {
+       if (temp->accountNumber == accountNumber )
+       {
+               if (temp->balance >= amount)
+                {
+                  temp->balance -= amount;
+                  printf("Withdrew %.2f from account %d\n", amount, accountNumber);
+                //  recordTransaction(accountNumber, "Transfer to", amount);
+
+                }
+          else
+                 {
+                        printf("Insufficient balance in account %d\n", accountNumber);
+                 }
+         return;
+       }
+        temp = temp->next;
+    }
+    printf("Account number %d not found!\n", accountNumber);
+}
+
+/////////////////////////////////////////// Function to create a new account///////////////////////////////////////////////////
+
+struct Account* createAccount(struct Account* head, int accountNumber, char* name,unsigned int number,int pin, float balance)
+{
+ struct Account* newAccount = (struct Account*)malloc(sizeof(struct Account));
+ newAccount->accountNumber = accountNumber;
+ strcpy(newAccount->accountHolderName, name);
+ newAccount->balance = balance;
+ newAccount->number = number;
+ newAccount->pin = pin;
+ newAccount->next = head;
+ return newAccount;
+}

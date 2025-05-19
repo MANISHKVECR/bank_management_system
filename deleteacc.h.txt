@@ -1,0 +1,37 @@
+#include"header.h"
+
+/////////////////////////////////////////// Function to delete an account ///////////////////////////////////////////////////
+
+struct Account* deleteAccount(struct Account* head, int accountNumber) {
+    struct Account *temp = head, *prev = NULL;
+
+    // Check if the account to be deleted is the head node
+    if (temp != NULL && temp->accountNumber == accountNumber) {
+        head = temp->next;  // Change head
+        free(temp);         // Free memory
+        printf("Account number %d deleted successfully!\n", accountNumber);
+        updateFile(head);   // Update the file after deletion
+        return head;
+    }
+
+    // Traverse the list to find the account and keep track of the previous node
+    while (temp != NULL && temp->accountNumber != accountNumber) {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    // If account not found
+    if (temp == NULL) {
+        printf("Account number %d not found!\n", accountNumber);
+        return head;
+    }
+
+    // Unlink the node from the list and free memory
+    prev->next = temp->next;
+    free(temp);
+    printf("Account number %d deleted successfully!\n", accountNumber);
+
+    // Update the file after deletion
+    updateFile(head);
+    return head;
+}

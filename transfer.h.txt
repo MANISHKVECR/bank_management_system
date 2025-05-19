@@ -1,0 +1,53 @@
+#include"header.h"
+#define TRANS_FILE "transactions.txt"
+
+///////////////////////////////////////transation record///////////////////////////////////////////////////////////////////////////
+void recordTransaction(int accountNumber, const char* type, float amount)
+{
+    FILE* file = fopen(TRANS_FILE, "a");
+    if (file == NULL) {
+        perror("Error opening transaction file");
+        return;
+    }
+    fprintf(file, "Account %d: %s of %.2f,TId\n", accountNumber, type, amount);
+    fclose(file);
+}
+///////////////////////////////////////transation history/////////////////////////////////////////////////////////////////////////
+void viewTransactionHistory()
+{
+    FILE* file = fopen(TRANS_FILE, "r");
+    if (file == NULL) {
+        printf("No transaction history found.\n");
+        return;
+    }
+    char line[100];
+    printf("\n--- Transaction History ---\n");
+    while (fgets(line, sizeof(line), file)) {
+        printf("%s", line);
+    }
+    fclose(file);
+}
+
+/////////////////////////////update in file////////////////////////////////////
+void updateFile(struct Account* head) {
+    // Open the file in write mode to overwrite the existing content
+    FILE* file = fopen(FILE_NAME, "w");
+    if (file == NULL) {
+        perror("Error updating file");
+        return;
+    }
+
+    struct Account* temp = head;
+    while (temp != NULL) {
+        fprintf(file, "%d,%s,%d,%.2f,%d\n",
+                temp->accountNumber,
+                temp->accountHolderName,
+                temp->number,
+                temp->balance,
+                temp->pin);
+        temp = temp->next;
+    }
+
+    fclose(file);  // Close the file after updating
+    printf("Account information successfully updated in %s.\n", FILE_NAME);
+}
